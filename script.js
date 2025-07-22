@@ -40,8 +40,8 @@ function GameBoard() {
     };
 
 
-    // the getBoard just need to push to the next line after each row
-    const getBoard = () => {
+    // the printBoard just need to push to the next line after each row
+    const printBoard = () => {
         // Print each row with their actual values
         console.log("-------------------------------------------");
         for (let i = 0; i < gridSize; i++) {
@@ -50,7 +50,6 @@ function GameBoard() {
             }))
         }
         console.log("-------------------------------------------");
-        return "Current Board";
     };
 
     const placeSymbol = (row, column, symbol) => {
@@ -72,7 +71,7 @@ function GameBoard() {
     initializeBoard();
 
     return {
-        getBoard,
+        printBoard,
         initializeBoard,
         placeSymbol
     }
@@ -137,10 +136,10 @@ function GameController() {
         console.log(`${activePlayer.getName()} turns`);
 
         // Display the board in console after each round
-        gameBoard.getBoard();
+        gameBoard.printBoard();
     }
 
-    console.log(gameBoard.getBoard());
+    console.log(gameBoard.printBoard());
 
     return {
         getActivePlayer,
