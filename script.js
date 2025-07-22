@@ -30,20 +30,50 @@ function GameBoard() {
 
     const board = [];
 
-    // Create a board based on gridSize
-    for (let rowIndex = 0; rowIndex < gridSize; rowIndex++) {
-        board.push([]);
-        for (let columnIndex = 0; columnIndex < gridSize; columnIndex++) {
-            board[rowIndex][columnIndex] = Cell();
+    const initializeBoard = () => {
+        for (let rowIndex = 0; rowIndex < gridSize; rowIndex++) {
+            board.push([]);
+            for (let columnIndex = 0; columnIndex < gridSize; columnIndex++) {
+                board[rowIndex][columnIndex] = Cell();
+            }
         }
-    }
-    const getBoard = () => board;
+        console.log(board);
+    };
 
-    const resetBoard = () => board = [];
+
+    // the getBoard just need to push to the next line after each row
+    const getBoard = () => {
+        // Print each row with their actual values
+        console.log("Board:");
+        for (let i = 0; i < gridSize; i++) {
+            console.log(board[0].map(cell => {
+                cell.getCell();
+            }))
+        }
+    };
+
+    const placeSymbol = (symbol, row, column) => {
+        const cell = board[row][column];
+        // Check if the cell is empty
+        if (cell.getCell() !== undefined) {
+            // Invalid move
+            console.log("The cell already contains a symbol");
+            return false;
+        }
+
+        // Place the symbol
+        cell.setCell(symbol);
+        return true;
+
+    }
+
+    // Immediately Initialize the board
+    initializeBoard();
 
     return {
         getBoard,
-        resetBoard
+        initializeBoard,
+        placeSymbol
     }
 }
 
@@ -51,12 +81,12 @@ function GameBoard() {
 
 // Cell Object that contains get and set
 function Cell() {
-    let cell = undefined;
+    let cellValue = undefined;
 
-    const getCell = () => cell;
+    const getCell = () => cellValue;
 
-    const setCell = (newCell) => {
-        cell = newCell;
+    const setCell = (symbol) => {
+        cellValue = symbol;
     }
 
     return {
@@ -65,14 +95,16 @@ function Cell() {
     }
 }
 
-function Player(name) {
+function Player(name, symbol) {
     const getName = () => name;
+    const getSymbol = () => symbol;
     let wins;
     const getWins = () => wins;
     const addWins = () => ++wins;
 
     return {
         getName,
+        getSymbol,
         getWins,
         addWins
     };
@@ -81,23 +113,37 @@ function Player(name) {
 function GameController() {
     // Get the players
     const players = [
-        Player('Peter'),
-        Player('Izabelle'),
-    ]    
+        Player('Peter', 'X'),
+        Player('Izabelle', 'O'),
+    ]
 
     const gameBoard = GameBoard();
 
     // Determine who's turn it is at first randomly
     let activePlayer = players[Math.floor(Math.random() * 2)];
-    
+
     const getActivePlayer = () => activePlayer;
 
-    // Ability to insert in a row x column to change the value of a cell
+    const playRound = (row, column) => {
+        const isSucess = gameBoard.placeSymbol(row, column, getActivePlayer().getSymbol());
 
+        if (!isSucess) {
+            return "Failed to Move";
+        }
+
+        // Switch the player if its success
+        activePlayer = activePlayer === players[0] ? players[1] : players[0];
+        console.log(`${activePlayer.getName()} turns`);
+
+        // Display the board in console after each round
+        gameBoard.getBoard();
+    }
+
+    console.log(gameBoard.getBoard());
 
     return {
         getActivePlayer,
-        gameBoard,
+        playRound,
     }
 }
 
