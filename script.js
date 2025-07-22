@@ -46,23 +46,23 @@ function GameBoard() {
         // Print each row with their actual values
         console.log("Board:");
         for (let i = 0; i < gridSize; i++) {
-            console.log(board[0].map(cell => {
-                cell.getCell();
+            console.log(board[i].map(cell => {
+                return cell.getCell();
             }))
         }
     };
 
-    const placeSymbol = (symbol, row, column) => {
-        const cell = board[row][column];
+    const placeSymbol = (row, column, symbol) => {
+        const selectedCell = board[row][column];
         // Check if the cell is empty
-        if (cell.getCell() !== undefined) {
+        if (selectedCell.getCell() !== undefined) {
             // Invalid move
             console.log("The cell already contains a symbol");
             return false;
         }
 
         // Place the symbol
-        cell.setCell(symbol);
+        selectedCell.setCell(symbol);
         return true;
 
     }
