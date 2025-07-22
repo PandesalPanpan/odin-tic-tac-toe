@@ -44,12 +44,14 @@ function GameBoard() {
     // the getBoard just need to push to the next line after each row
     const getBoard = () => {
         // Print each row with their actual values
-        console.log("Board:");
+        console.log("-------------------------------------------");
         for (let i = 0; i < gridSize; i++) {
             console.log(board[i].map(cell => {
                 return cell.getCell();
             }))
         }
+        console.log("-------------------------------------------");
+        return "Current Board";
     };
 
     const placeSymbol = (row, column, symbol) => {
