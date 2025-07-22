@@ -37,7 +37,6 @@ function GameBoard() {
                 board[rowIndex][columnIndex] = Cell();
             }
         }
-        console.log(board);
     };
 
 
