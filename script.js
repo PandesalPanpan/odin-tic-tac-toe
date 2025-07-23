@@ -28,16 +28,17 @@ let gameBoard = [
 function GameBoard() {
     const gridSize = 3;
 
-    const board = [];
+    let board = [];
 
     const initializeBoard = () => {
+        board.length = 0; // clear the array
+
         for (let rowIndex = 0; rowIndex < gridSize; rowIndex++) {
             board.push([]);
             for (let columnIndex = 0; columnIndex < gridSize; columnIndex++) {
                 board[rowIndex][columnIndex] = Cell();
             }
         }
-        console.log(board);
     };
 
     const getBoard = () => board;
@@ -101,7 +102,7 @@ function Cell() {
 function Player(name, symbol) {
     const getName = () => name;
     const getSymbol = () => symbol;
-    let wins;
+    let wins = 0;
     const getWins = () => wins;
     const addWins = () => ++wins;
 
@@ -243,27 +244,44 @@ function GameController() {
         return false;
     }
 
+    const resetGame = () => {
+        gameBoard.initializeBoard();
+    }
+
     // Determine who's turn it is at first randomly
     let activePlayer = players[Math.floor(Math.random() * 2)];
 
     const getActivePlayer = () => activePlayer;
 
     const playRound = (row, column) => {
+        // TODO: Add another check here if there's already game winning board to avoid using playRound
+        if (checkForWinner() !== false) {
+            return "Reset the board to start playing";
+        }
+
         const isSucess = gameBoard.placeSymbol(row, column, getActivePlayer().getSymbol());
 
         if (!isSucess) {
             return "Failed to Move";
         }
 
+        // Display the board in console after placing
+        gameBoard.printBoard();
+
         // TODO: Add a check for winner here
-        console.log(checkForWinner(gameBoard.getBoard()));
+        if (checkForWinner() !== false) {
+            // Get the current player and mark them as winner, add it to the user
+            // Add a stoppage to usage of playRound when there's a winner
+            activePlayer.addWins();
+            
+            return `Winner: ${activePlayer.getName()} with win#${activePlayer.getWins()}`;
+        }
 
         // Switch the player if its success
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
         console.log(`${activePlayer.getName()} turns`);
 
-        // Display the board in console after each round
-        gameBoard.printBoard();
+        
     }
 
     gameBoard.printBoard();
@@ -271,6 +289,7 @@ function GameController() {
     return {
         getActivePlayer,
         playRound,
+        resetGame,
     }
 }
 
