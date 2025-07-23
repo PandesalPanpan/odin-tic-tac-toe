@@ -37,8 +37,10 @@ function GameBoard() {
                 board[rowIndex][columnIndex] = Cell();
             }
         }
+        console.log(board);
     };
 
+    const getBoard = () => board;
 
     // the printBoard just need to push to the next line after each row
     const printBoard = () => {
@@ -73,6 +75,7 @@ function GameBoard() {
     return {
         printBoard,
         initializeBoard,
+        getBoard,
         placeSymbol
     }
 }
@@ -119,6 +122,127 @@ function GameController() {
 
     const gameBoard = GameBoard();
 
+    const checkForWinner = () => {
+        // Expecting a board like
+        /*
+        [
+            [
+                {}, {}, {}
+            ],
+            [
+                {}, {}, {}
+            ],
+            [
+                {}, {}, {}
+            ]
+        ]
+        */
+        // There are 8 possible winning conditions
+        const currentBoard = gameBoard.getBoard();
+        const gridSize = currentBoard[0].length;
+        //console.log(`${currentBoard[0].length}`)
+
+        // Check each row straight
+        for (let rowIndex = 0; rowIndex < gridSize; rowIndex++) {
+            /* 
+            Get the symbol of the first one and it doesn't matter which one
+            since if one doesn't match then its time break it
+            */
+
+            /* 
+            Checking using the first symbol in that row since
+            any mismatch of the symbol should be removed
+            */
+            const symbolToCheck = currentBoard[rowIndex][0].getCell();
+
+            // Make sure the symbol is not undefined, if so move to the next row immediately
+            if (symbolToCheck === undefined) {
+                continue;
+            }
+
+            let rowMismatchFound = false;
+
+            // Check each cell in the row if has the same symbol
+            for (let columnIndex = 0; columnIndex < gridSize; columnIndex++) {
+                if (symbolToCheck !== currentBoard[rowIndex][columnIndex].getCell()) {
+                    rowMismatchFound = true;
+                    break;
+                }
+            }
+            // If mismatch is found, move on to the next row
+            if (rowMismatchFound === true) {
+                continue;
+            }
+            // If no mismatch is found === all symbol is the same then winning condition is met
+            return true;
+        }
+
+        // Check each column top-down
+        for (let columnIndex = 0; columnIndex < gridSize; columnIndex++) {
+            // Loop through using a column index
+            // Get the first value in column index first row
+            const symbolToCheck = currentBoard[0][columnIndex].getCell();
+            // Check if that value is undefined therefore move on to the next column
+            if (symbolToCheck === undefined) {
+                continue; // Skip the column since it has undefined cell
+            }
+            // Initialize columnMismatchFound = false
+            let columnMismatchFound = false;
+            // Loop through using a row index
+            for (let rowIndex = 0; rowIndex < gridSize; rowIndex++) {
+                // Grab the value in the current column in each rows
+                // Check if the value mismatched with the symbolToCheck
+                if (symbolToCheck !== currentBoard[rowIndex][columnIndex].getCell()) {
+                    // Change the value of the columnMismatchFound = true and break the inner row loop since that column is useless
+                    columnMismatchFound = true;
+                    break;
+                }
+            }
+
+            // if the columnMismatch is true then it means that the column does not contain the winning conditions
+            if (columnMismatchFound === true) {
+                break; // skip to the next column
+            }
+
+            return "someone won"; // someone won
+
+        }
+
+        // Check the the two diagonals for checks
+        // Start with top left going to the bottom right
+        // just hardcode the check in the cross
+        // Check if topLeft, middle, bottomRight are equals
+        const topLeftToBottomRight = [
+            currentBoard[0][0].getCell(),
+            currentBoard[1][1].getCell(),
+            currentBoard[2][2].getCell(),
+        ]
+
+
+        if (topLeftToBottomRight[0] !== undefined) {
+            const checkTopLeftToBottomRight = topLeftToBottomRight.every(cell => cell === topLeftToBottomRight[0]);
+            if (checkTopLeftToBottomRight === true) {
+                return "Top Left to Bottom Right";
+            }
+        }
+
+        const topRightToBottomLeft = [
+            currentBoard[0][2].getCell(),
+            currentBoard[1][1].getCell(),
+            currentBoard[2][0].getCell(),
+        ]
+
+        if (topRightToBottomLeft[0] !== undefined){
+            const checkTopRightToBottomLeft = topRightToBottomLeft.every(cell => cell === topLeftToBottomRight[0]);
+            if (checkTopRightToBottomLeft === true) {
+                return "Top Right to Bottom Left";
+            }
+        }
+
+        // No one won yet
+        return false;
+    }
+
     // Determine who's turn it is at first randomly
     let activePlayer = players[Math.floor(Math.random() * 2)];
 
@@ -131,6 +255,9 @@ function GameController() {
             return "Failed to Move";
         }
 
+        // TODO: Add a check for winner here
+        console.log(checkForWinner(gameBoard.getBoard()));
+
         // Switch the player if its success
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
         console.log(`${activePlayer.getName()} turns`);
@@ -139,7 +266,7 @@ function GameController() {
         gameBoard.printBoard();
     }
 
-    console.log(gameBoard.printBoard());
+    gameBoard.printBoard();
 
     return {
         getActivePlayer,
