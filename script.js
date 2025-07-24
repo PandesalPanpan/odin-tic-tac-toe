@@ -254,7 +254,6 @@ function GameController() {
     const getActivePlayer = () => activePlayer;
 
     const playRound = (row, column) => {
-        // TODO: Add another check here if there's already game winning board to avoid using playRound
         if (checkForWinner() !== false) {
             return "Reset the board to start playing";
         }
@@ -262,7 +261,7 @@ function GameController() {
         const isSucess = gameBoard.placeSymbol(row, column, getActivePlayer().getSymbol());
 
         if (!isSucess) {
-            return "Failed to Move";
+            return false;
         }
 
         // Display the board in console after placing
@@ -281,7 +280,7 @@ function GameController() {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
         console.log(`${activePlayer.getName()} turns`);
 
-        
+        return gameBoard.getBoard();
     }
 
     gameBoard.printBoard();
@@ -290,11 +289,118 @@ function GameController() {
         getActivePlayer,
         playRound,
         resetGame,
+        gameBoardArray: gameBoard.getBoard() 
     }
 }
 
-const controller = GameController();
+// const controller = GameController();
 
-// Players are stored in objects
+/*
+    ScreenController will have instance of the GameController
+    Will manage the displaying in the HTML based on the output in the GameController
+*/
+function ScreenController() {
+    const controller = GameController();
+    const container = document.querySelector('.container');
 
-// An Object to control the flow of the game itself
+    const buildScreenGameBoard = () => {
+        // Build the screen based on the 3x3 Array
+        container.innerHTML = '';
+
+        for (let i = 1; i <= 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.id = `cell-${i}`;
+
+            const rowAndColumn = getCellIdRowColumn(`cell-${i}`);
+            if (rowAndColumn === undefined) {
+                throw Error('getCellIdRowColumn() fail in getting proper row and column');
+            }
+
+            // Get the Symbol in that cell from the array
+            const symbol = controller.gameBoardArray[rowAndColumn[0]][rowAndColumn[1]].getCell();
+            
+            // If the symbol is undefined, don't place anything
+            if (symbol === undefined) {
+                cell.innerHTML = ' ';
+            } else {
+                cell.innerHTML = `${symbol}`;
+            }
+
+            container.appendChild(cell);
+        }
+    }
+
+    // Initialize the eventListener
+    const initializeScreenListener = () => {
+        container.addEventListener('click', (event) => {
+            if (event.target.classList.contains('cell')) {
+                const cell_id = event.target.id;
+                // Trigger playRound
+                const rowColumnArray = getCellIdRowColumn(cell_id);
+                // Check it it sends undefined
+                if (rowColumnArray === undefined) {
+                    return 'show an invalid id';
+                }
+                const result = controller.playRound(rowColumnArray[0], rowColumnArray[1]);
+                // Check if it says 'Invalid Placement'
+                // If so don't do anything
+                // Check if if says contains 'Winner' get the current player
+                // Update the board & display a dialog who's the winner
+                // TODO: Add a win count display
+                // Check if it just returned an Array
+                // Just update the board with the array
+
+
+                if (result instanceof Array === false) {
+                    throw Error(`The result from controller.playRound() did not return an array\nReturn: ${result}`);
+                }
+
+                // if it sends an board, rebuild the board
+                
+                // and if it sends a player object then show winner
+                // if it sends a false, don't rebuild
+                buildScreenGameBoard();
+            }
+        })
+    }
+
+    const getCellIdRowColumn = (cellId) => {
+        // [Row, Column]
+        
+        switch (cellId) {
+            case 'cell-1':
+                return [0,0];
+            case 'cell-2':
+                return [0,1];
+            case 'cell-3':
+                return [0,2];
+            case 'cell-4':
+                return [1,0];
+            case 'cell-5':
+                return [1,1];
+            case 'cell-6':
+                return [1,2];
+            case 'cell-7':
+                return [2,0];
+            case 'cell-8':
+                return [2,1];
+            case 'cell-9':
+                return [2,2];
+            default:
+                break;
+        }
+    }
+
+    return {
+        buildScreenGameBoard,
+        initializeScreenListener
+    }
+}
+
+const screenController = ScreenController();
+// TODO: Change to whne the DOMContentLoaded to initialize the ScreenController
+document.addEventListener('DOMContentLoaded', (event) => {
+    screenController.buildScreenGameBoard();
+    screenController.initializeScreenListener();
+})
