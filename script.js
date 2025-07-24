@@ -254,33 +254,55 @@ function GameController() {
     const getActivePlayer = () => activePlayer;
 
     const playRound = (row, column) => {
+        /*
+            Create a object that returns the state of the game
+            to allow the ScreenController to check for consistent properties
+        */
+       const result = {
+            success: false, // True if its the expected action
+            type: 'invalid', // 'Invalid', 'continue', 'win', 'error'
+            message: '',
+            data: null // either the gameBoard or user data
+       }
+
         if (checkForWinner() !== false) {
-            return "Reset the board to start playing";
+            result.type = 'error';
+            result.message = 'The game has already won, reset the game'
+            return result;
         }
 
         const isSucess = gameBoard.placeSymbol(row, column, getActivePlayer().getSymbol());
 
         if (!isSucess) {
-            return false;
+            // The game failed to place a symbol due to having already have a symbol placed
+            result.message = 'Invalid move';
+            return result;
         }
 
         // Display the board in console after placing
         gameBoard.printBoard();
 
-        // TODO: Add a check for winner here
+        // Check for winner after placing the symbol to immediately declare winner
         if (checkForWinner() !== false) {
             // Get the current player and mark them as winner, add it to the user
-            // Add a stoppage to usage of playRound when there's a winner
             activePlayer.addWins();
-            
-            return `Winner: ${activePlayer.getName()} with win#${activePlayer.getWins()}`;
+            const name = activePlayer.getName();
+            const winCount = activePlayer.getWins();
+            result.message = {name, winCount}
+            result.data = gameBoard.getBoard();
+            result.type = 'win';
+            return result;
         }
 
         // Switch the player if its success
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
         console.log(`${activePlayer.getName()} turns`);
+        result.success = true;
+        result.type = 'continue';
+        result.message = `${activePlayer.getName()}`;
+        result.data = gameBoard.getBoard();
 
-        return gameBoard.getBoard();
+        return result;
     }
 
     gameBoard.printBoard();
@@ -338,29 +360,32 @@ function ScreenController() {
                 const cell_id = event.target.id;
                 // Trigger playRound
                 const rowColumnArray = getCellIdRowColumn(cell_id);
-                // Check it it sends undefined
-                if (rowColumnArray === undefined) {
-                    return 'show an invalid id';
-                }
+
                 const result = controller.playRound(rowColumnArray[0], rowColumnArray[1]);
                 // Check if it says 'Invalid Placement'
-                // If so don't do anything
+                if (result && result.type === 'invalid') {
+                    // If so don't do anything
+                    return;
+                }
+                
                 // Check if if says contains 'Winner' get the current player
-                // Update the board & display a dialog who's the winner
-                // TODO: Add a win count display
-                // Check if it just returned an Array
-                // Just update the board with the array
+                if (result && result.type === 'win') {
+                    // Update the board & display a dialog who's the winner
+                    buildScreenGameBoard();
+                    console.log(`Winner: ${result.message.name}`);
+                    console.log(`Win count: ${result.message.winCount}`);
+                    // TODO: Add a win count display
+                    return;
+                }
+                
 
-
-                if (result instanceof Array === false) {
-                    throw Error(`The result from controller.playRound() did not return an array\nReturn: ${result}`);
+                if (result && result.type === 'continue') {
+                    buildScreenGameBoard();
+                    return;
                 }
 
-                // if it sends an board, rebuild the board
-                
-                // and if it sends a player object then show winner
-                // if it sends a false, don't rebuild
-                buildScreenGameBoard();
+
+                throw Error(`Unchecked Data Received: ${result}`);
             }
         })
     }
@@ -388,7 +413,7 @@ function ScreenController() {
             case 'cell-9':
                 return [2,2];
             default:
-                break;
+                throw Error(`getCellIdRowColumn invalid cellId: ${cellId}`);
         }
     }
 
