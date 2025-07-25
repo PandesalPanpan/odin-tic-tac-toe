@@ -362,6 +362,20 @@ function ScreenController() {
                 const rowColumnArray = getCellIdRowColumn(cell_id);
 
                 const result = controller.playRound(rowColumnArray[0], rowColumnArray[1]);
+                
+                // Check if there's already a winner
+                if (result.success == false && result.type === 'error') {
+                    // Trigger a dialog that the game has to be reset
+                    const userConfirmed = confirm("Game has ended, reset the game?");
+                    if (userConfirmed) {
+                        controller.resetGame();
+                        buildScreenGameBoard();
+                        return;
+                    } else {
+                        return;
+                    }
+                }
+
                 // Check if it says 'Invalid Placement'
                 if (result && result.type === 'invalid') {
                     // If so don't do anything
@@ -385,7 +399,12 @@ function ScreenController() {
                 }
 
 
-                throw Error(`Unchecked Data Received: ${result}`);
+                throw Error(`Unchecked Data Received:
+                    \nSucess:${result.success}
+                    \nType:${result.type}
+                    \nMessage:${result.message}
+                    \nData:${result.data}`
+                );
             }
         })
     }
