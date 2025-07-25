@@ -374,6 +374,17 @@ function ScreenController() {
     const controller = GameController(players);
     const container = document.querySelector('.container');
 
+    // Select for player container
+    const playerOneName = document.querySelector('.player-1-name');
+    const playerTwoName = document.querySelector('.player-2-name');
+    const playerOneWin = document.querySelector('.player-1-win');
+    const playerTwoWin = document.querySelector('.player-2-win');
+
+    playerOneName.textContent = `${player1 ?? 'Player 1'}`;
+    playerTwoName.textContent = `${player2 ?? 'Player 2'}`;
+    playerOneWin.textContent = 0;
+    playerTwoWin.textContent = 0;
+
     const buildScreenGameBoard = () => {
         // Build the screen based on the 3x3 Array
         container.innerHTML = '';
@@ -435,6 +446,8 @@ function ScreenController() {
                 if (result && result.type === 'win') {
                     // Update the board & display a dialog who's the winner
                     buildScreenGameBoard();
+                    // Update the win display
+                    updatePlayerWins(result.message.name, result.message.winCount);
                     console.log(`Winner: ${result.message.name}`);
                     console.log(`Win count: ${result.message.winCount}`);
                     const userConfirmed = confirm(`Winner: ${result.message.name}\n
@@ -502,6 +515,23 @@ function ScreenController() {
             default:
                 throw Error(`getCellIdRowColumn invalid cellId: ${cellId}`);
         }
+    }
+
+    const updatePlayerWins = (playerName, playerWins) => {
+        // Check in the two players which matches
+        if (playerName === playerOneName.textContent) {
+            // update the player win count
+            playerOneWin.textContent = `${playerWins}`;
+            return;
+        }
+
+        if (playerName === playerTwoName.textContent) {
+            // update the player win count
+            playerTwoWin.textContent = `${playerWins}`;
+            return;
+        }
+
+        throw Error(`updatePlayerWins() did not match with any players name from received argument PlayerName: ${playerName}, PlayerWins${playerWins}`)
     }
 
     return {
