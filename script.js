@@ -423,6 +423,13 @@ function ScreenController() {
                     console.log(`Winner: ${result.message.name}`);
                     console.log(`Win count: ${result.message.winCount}`);
                     // TODO: Add a win count display
+                    const userConfirmed = confirm(`Winner: ${result.message.name}\n
+                        Win: ${result.message.winCount}`);
+                    if (userConfirmed) {
+                        controller.resetGame();
+                        buildScreenGameBoard();
+                        return;
+                    }
                     return;
                 }
 
@@ -432,6 +439,7 @@ function ScreenController() {
                     const userConfirmed = confirm("Draw: Reset the Game?");
                     if (userConfirmed) {
                         controller.resetGame();
+                        buildScreenGameBoard();
                         return;
                     } else {
                         return;
