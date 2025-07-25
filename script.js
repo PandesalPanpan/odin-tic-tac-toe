@@ -114,16 +114,20 @@ function Player(name, symbol) {
     };
 }
 
-function GameController() {
-    // Get the players
-    const players = [
-        Player('Peter', 'X'),
-        Player('Izabelle', 'O'),
-    ]
+function GameController(players = [
+        Player('Player 1', 'X'),
+        Player('Player 2', 'O'),
+    ]) {
+
+    
+
 
     const gameBoard = GameBoard();
 
     const checkForWinner = () => {
+        // 'continue' = no winner yet
+        // 'win' = has winner
+        // 'draw' 
         // Expecting a board like
         /*
         [
@@ -175,7 +179,7 @@ function GameController() {
                 continue;
             }
             // If no mismatch is found === all symbol is the same then winning condition is met
-            return true;
+            return 'win';
         }
 
         // Check each column top-down
@@ -205,7 +209,7 @@ function GameController() {
                 break; // skip to the next column
             }
 
-            return "someone won"; // someone won
+            return "win"; // someone won
 
         }
 
@@ -223,7 +227,7 @@ function GameController() {
         if (topLeftToBottomRight[0] !== undefined) {
             const checkTopLeftToBottomRight = topLeftToBottomRight.every(cell => cell === topLeftToBottomRight[0]);
             if (checkTopLeftToBottomRight === true) {
-                return "Top Left to Bottom Right";
+                return "win";
             }
         }
 
@@ -236,12 +240,30 @@ function GameController() {
         if (topRightToBottomLeft[0] !== undefined){
             const checkTopRightToBottomLeft = topRightToBottomLeft.every(cell => cell === topLeftToBottomRight[0]);
             if (checkTopRightToBottomLeft === true) {
-                return "Top Right to Bottom Left";
+                return "win";
             }
         }
 
+        // if the board is all filled up then there's no way to place a symbol again
+        // Get the board
+        // initialize hasFoundUndefined = false
+        let hasFoundUndefined = false;
+        // Outer loop in the rows
+        outerLoop: for (let rowIndex = 0; rowIndex < gridSize; rowIndex++) {
+            // inner loop for each cell in the row
+            for (let columnIndex = 0; columnIndex < gridSize; columnIndex++) {
+                if (currentBoard[rowIndex][columnIndex].getCell() === undefined) {
+                    hasFoundUndefined = true;
+                    break outerLoop; // skip immediately since there are still empty cells
+                }
+            }
+        }
+        if (hasFoundUndefined === false) {
+            return 'draw';
+        }
+
         // No one won yet
-        return false;
+        return 'continue';
     }
 
     const resetGame = () => {
@@ -264,8 +286,10 @@ function GameController() {
             message: '',
             data: null // either the gameBoard or user data
        }
+       
+       let checkWinner = checkForWinner();
 
-        if (checkForWinner() !== false) {
+        if (checkWinner === 'win') {
             result.type = 'error';
             result.message = 'The game has already won, reset the game'
             return result;
@@ -279,11 +303,21 @@ function GameController() {
             return result;
         }
 
+        checkWinner = checkForWinner();
+
         // Display the board in console after placing
         gameBoard.printBoard();
 
+        if (checkWinner === 'draw') {
+            result.message = "The game is a draw";
+            result.type = 'draw';
+            result.data = gameBoard.getBoard();
+            return result;
+        }
+
+
         // Check for winner after placing the symbol to immediately declare winner
-        if (checkForWinner() !== false) {
+        if (checkWinner === 'win') {
             // Get the current player and mark them as winner, add it to the user
             activePlayer.addWins();
             const name = activePlayer.getName();
@@ -390,6 +424,18 @@ function ScreenController() {
                     console.log(`Win count: ${result.message.winCount}`);
                     // TODO: Add a win count display
                     return;
+                }
+
+                if (result.type === 'draw') {
+                    buildScreenGameBoard();
+                    // Show a dialog to reset the game since its a draw
+                    const userConfirmed = confirm("Draw: Reset the Game?");
+                    if (userConfirmed) {
+                        controller.resetGame();
+                        return;
+                    } else {
+                        return;
+                    }
                 }
                 
 
