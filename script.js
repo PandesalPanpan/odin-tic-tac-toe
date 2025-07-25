@@ -356,7 +356,22 @@ function GameController(players = [
     Will manage the displaying in the HTML based on the output in the GameController
 */
 function ScreenController() {
-    const controller = GameController();
+    let player1 = null;
+    do {
+        player1 = prompt("Enter X name: ");
+    } while (player1 === null || player1.trim() === '');
+    
+    let player2 = null;
+    do {
+        player2 = prompt("Enter O name: ");
+    } while (player2 === null || player2.trim() === '');
+
+    const players = [
+        Player(`${player1}`, 'X'),
+        Player(`${player2}`, 'O'),
+    ]
+
+    const controller = GameController(players);
     const container = document.querySelector('.container');
 
     const buildScreenGameBoard = () => {
@@ -422,7 +437,6 @@ function ScreenController() {
                     buildScreenGameBoard();
                     console.log(`Winner: ${result.message.name}`);
                     console.log(`Win count: ${result.message.winCount}`);
-                    // TODO: Add a win count display
                     const userConfirmed = confirm(`Winner: ${result.message.name}\n
                         Win: ${result.message.winCount}`);
                     if (userConfirmed) {
