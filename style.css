@@ -67,5 +67,16 @@ body {
 }
 
 .tic-tac-toe-container .cell {
-    border: 2px solid red;
+    border: 2px solid black;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
 }
