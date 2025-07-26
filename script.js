@@ -389,7 +389,7 @@ function ScreenController() {
 
     // Add a reset button
 
-    const buildScreenGameBoard = (gameEnded = 'continue') => {
+    const buildScreenGameBoard = (gameState = 'continue') => {
         // Build the screen based on the 3x3 Array
         tictactoeContainer.innerHTML = '';
 
@@ -417,17 +417,27 @@ function ScreenController() {
         }
 
         // Add an argument on the buildScreenGameBoard called gameEnded
-        if (gameEnded === 'continue') {
+        if (gameState === 'continue') {
             // if not gameEnded then update who's turn it is
             feedbackContainer.innerHTML = '';
 
             feedbackContainer.textContent = `${controller.getActivePlayer().getName()} turn: ${controller.getActivePlayer().getSymbol()}`;
+            return;
         }
-        // else update if its a draw or a player
-        // Update feedback
-        // get the current active player from the controller
-        // Display activeplayer name and say its their turn
 
+        if (gameState === 'win') {
+            feedbackContainer.innerHTML = '';
+            feedbackContainer.textContent = `${controller.getActivePlayer().getName()} wins!`;
+            return;
+        }
+
+        if (gameState === 'draw') {
+            feedbackContainer.innerHTML = '';
+            feedbackContainer.textContent = `Draw`;
+            return;
+        }
+        throw Error(`buildScreenGameBoard(): Unexpected argument gameState: ${gameState}`);
+        
     }
 
     // Initialize the eventListener
@@ -462,7 +472,7 @@ function ScreenController() {
                 // Check if if says contains 'Winner' get the current player
                 if (result && result.type === 'win') {
                     // Update the board & display a dialog who's the winner
-                    buildScreenGameBoard();
+                    buildScreenGameBoard('win');
                     // Update the win display
                     updatePlayerWins(result.message.name, result.message.winCount);
                     
@@ -480,7 +490,7 @@ function ScreenController() {
                 }
 
                 if (result.type === 'draw') {
-                    buildScreenGameBoard();
+                    buildScreenGameBoard('draw');
                     // Show a dialog to reset the game since its a draw
                     setTimeout(() => {
                         const userConfirmed = confirm("Draw: Reset the Game?");
