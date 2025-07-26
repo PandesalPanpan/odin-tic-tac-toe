@@ -364,7 +364,7 @@ function ScreenController() {
     let player2 = null;
     do {
         player2 = prompt("Enter O name: ");
-    } while (player2 === null || player2.trim() === '');
+    } while (player2 === null || player2.trim() === '' || player2 === player1);
 
     const players = [
         Player(`${player1}`, 'X'),
