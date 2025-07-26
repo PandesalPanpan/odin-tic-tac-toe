@@ -238,7 +238,7 @@ function GameController(players = [
         ]
 
         if (topRightToBottomLeft[0] !== undefined){
-            const checkTopRightToBottomLeft = topRightToBottomLeft.every(cell => cell === topLeftToBottomRight[0]);
+            const checkTopRightToBottomLeft = topRightToBottomLeft.every(cell => cell === topRightToBottomLeft[0]);
             if (checkTopRightToBottomLeft === true) {
                 return "win";
             }
@@ -356,22 +356,22 @@ function GameController(players = [
     Will manage the displaying in the HTML based on the output in the GameController
 */
 function ScreenController() {
-    let player1 = null;
-    do {
-        player1 = prompt("Enter X name: ");
-    } while (player1 === null || player1.trim() === '');
+    // let player1 = null;
+    // do {
+    //     player1 = prompt("Enter X name: ");
+    // } while (player1 === null || player1.trim() === '');
     
-    let player2 = null;
-    do {
-        player2 = prompt("Enter O name: ");
-    } while (player2 === null || player2.trim() === '' || player2 === player1);
+    // let player2 = null;
+    // do {
+    //     player2 = prompt("Enter O name: ");
+    // } while (player2 === null || player2.trim() === '' || player2 === player1);
 
-    const players = [
-        Player(`${player1}`, 'X'),
-        Player(`${player2}`, 'O'),
-    ]
+    // const players = [
+    //     Player(`${player1}`, 'X'),
+    //     Player(`${player2}`, 'O'),
+    // ]
 
-    const controller = GameController(players);
+    const controller = GameController();
     const tictactoeContainer = document.querySelector('.tic-tac-toe-container');
     const resetBtn = document.querySelector('#reset-btn');
 
@@ -381,8 +381,8 @@ function ScreenController() {
     const playerOneWin = document.querySelector('.player-1-win');
     const playerTwoWin = document.querySelector('.player-2-win');
 
-    playerOneName.textContent = `${player1 ?? 'Player 1'}`;
-    playerTwoName.textContent = `${player2 ?? 'Player 2'}`;
+    playerOneName.textContent = `${'Player 1'}`;
+    playerTwoName.textContent = `${'Player 2'}`;
     playerOneWin.textContent = 0;
     playerTwoWin.textContent = 0;
 
