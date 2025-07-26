@@ -68,6 +68,7 @@ body {
 
 .tic-tac-toe-container .cell {
     border: 2px solid black;
+    margin: -1px;
 }
 
 .cell {
