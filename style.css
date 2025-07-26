@@ -70,6 +70,18 @@ body {
     border: 2px solid black;
 }
 
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.cell:hover {
+  background-color: #f0f0f0;
+}
+
 .container {
   display: flex;
   flex-direction: column;
