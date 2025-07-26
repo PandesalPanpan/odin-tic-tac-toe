@@ -451,15 +451,17 @@ function ScreenController() {
                     buildScreenGameBoard();
                     // Update the win display
                     updatePlayerWins(result.message.name, result.message.winCount);
-                    console.log(`Winner: ${result.message.name}`);
-                    console.log(`Win count: ${result.message.winCount}`);
-                    const userConfirmed = confirm(`Winner: ${result.message.name}\n
+                    
+                    setTimeout(() => {
+                        const userConfirmed = confirm(`Winner: ${result.message.name}\n
                         Win: ${result.message.winCount}`);
-                    if (userConfirmed) {
-                        controller.resetGame();
-                        buildScreenGameBoard();
-                        return;
-                    }
+                        if (userConfirmed) {
+                            controller.resetGame();
+                            buildScreenGameBoard();
+                            return;
+                        }
+                    }, 100);
+                    
                     return;
                 }
 
