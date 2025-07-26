@@ -372,7 +372,8 @@ function ScreenController() {
     ]
 
     const controller = GameController(players);
-    const container = document.querySelector('.tic-tac-toe-container');
+    const tictactoeContainer = document.querySelector('.tic-tac-toe-container');
+    const resetBtn = document.querySelector('#reset-btn');
 
     // Select for player container
     const playerOneName = document.querySelector('.player-1-name');
@@ -389,7 +390,7 @@ function ScreenController() {
 
     const buildScreenGameBoard = () => {
         // Build the screen based on the 3x3 Array
-        container.innerHTML = '';
+        tictactoeContainer.innerHTML = '';
 
         for (let i = 1; i <= 9; i++) {
             const cell = document.createElement('div');
@@ -411,13 +412,13 @@ function ScreenController() {
                 cell.innerHTML = `${symbol}`;
             }
 
-            container.appendChild(cell);
+            tictactoeContainer.appendChild(cell);
         }
     }
 
     // Initialize the eventListener
     const initializeScreenListener = () => {
-        container.addEventListener('click', (event) => {
+        tictactoeContainer.addEventListener('click', (event) => {
             if (event.target.classList.contains('cell')) {
                 const cell_id = event.target.id;
                 // Trigger playRound
@@ -489,6 +490,11 @@ function ScreenController() {
                     \nData:${result.data}`
                 );
             }
+        })
+        resetBtn.addEventListener('click', (event) => {
+            // Trigger the reset of the controller
+            controller.resetGame();
+            buildScreenGameBoard();
         })
     }
 
