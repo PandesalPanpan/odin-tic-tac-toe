@@ -374,6 +374,7 @@ function ScreenController() {
     const controller = GameController();
     const tictactoeContainer = document.querySelector('.tic-tac-toe-container');
     const resetBtn = document.querySelector('#reset-btn');
+    const feedbackContainer = document.querySelector('.feedback-container');
 
     // Select for player container
     const playerOneName = document.querySelector('.player-1-name');
@@ -388,7 +389,7 @@ function ScreenController() {
 
     // Add a reset button
 
-    const buildScreenGameBoard = () => {
+    const buildScreenGameBoard = (gameEnded = 'continue') => {
         // Build the screen based on the 3x3 Array
         tictactoeContainer.innerHTML = '';
 
@@ -414,6 +415,19 @@ function ScreenController() {
 
             tictactoeContainer.appendChild(cell);
         }
+
+        // Add an argument on the buildScreenGameBoard called gameEnded
+        if (gameEnded === 'continue') {
+            // if not gameEnded then update who's turn it is
+            feedbackContainer.innerHTML = '';
+
+            feedbackContainer.textContent = `${controller.getActivePlayer().getName()} turn: ${controller.getActivePlayer().getSymbol()}`;
+        }
+        // else update if its a draw or a player
+        // Update feedback
+        // get the current active player from the controller
+        // Display activeplayer name and say its their turn
+
     }
 
     // Initialize the eventListener
@@ -468,14 +482,15 @@ function ScreenController() {
                 if (result.type === 'draw') {
                     buildScreenGameBoard();
                     // Show a dialog to reset the game since its a draw
-                    const userConfirmed = confirm("Draw: Reset the Game?");
-                    if (userConfirmed) {
-                        controller.resetGame();
-                        buildScreenGameBoard();
-                        return;
-                    } else {
-                        return;
-                    }
+                    setTimeout(() => {
+                        const userConfirmed = confirm("Draw: Reset the Game?");
+                        if (userConfirmed) {
+                            controller.resetGame();
+                            buildScreenGameBoard();
+                            return;
+                        }
+                    }, 100)
+                    return;
                 }
                 
 
