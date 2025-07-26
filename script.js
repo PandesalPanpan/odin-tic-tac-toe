@@ -356,22 +356,22 @@ function GameController(players = [
     Will manage the displaying in the HTML based on the output in the GameController
 */
 function ScreenController() {
-    // let player1 = null;
-    // do {
-    //     player1 = prompt("Enter X name: ");
-    // } while (player1 === null || player1.trim() === '');
+    let player1 = null;
+    do {
+        player1 = prompt("Enter X name: ");
+    } while (player1 === null || player1.trim() === '');
     
-    // let player2 = null;
-    // do {
-    //     player2 = prompt("Enter O name: ");
-    // } while (player2 === null || player2.trim() === '' || player2 === player1);
+    let player2 = null;
+    do {
+        player2 = prompt("Enter O name: ");
+    } while (player2 === null || player2.trim() === '' || player2 === player1);
 
-    // const players = [
-    //     Player(`${player1}`, 'X'),
-    //     Player(`${player2}`, 'O'),
-    // ]
+    const players = [
+        Player(`${player1}`, 'X'),
+        Player(`${player2}`, 'O'),
+    ]
 
-    const controller = GameController();
+    const controller = GameController(players);
     const tictactoeContainer = document.querySelector('.tic-tac-toe-container');
     const resetBtn = document.querySelector('#reset-btn');
     const feedbackContainer = document.querySelector('.feedback-container');
@@ -382,8 +382,8 @@ function ScreenController() {
     const playerOneWin = document.querySelector('.player-1-win');
     const playerTwoWin = document.querySelector('.player-2-win');
 
-    playerOneName.textContent = `${'Player 1'}`;
-    playerTwoName.textContent = `${'Player 2'}`;
+    playerOneName.textContent = `${player1 ?? 'Player 1'}`;
+    playerTwoName.textContent = `${player2 ??'Player 2'}`;
     playerOneWin.textContent = 0;
     playerTwoWin.textContent = 0;
 
@@ -476,15 +476,15 @@ function ScreenController() {
                     // Update the win display
                     updatePlayerWins(result.message.name, result.message.winCount);
                     
-                    setTimeout(() => {
-                        const userConfirmed = confirm(`Winner: ${result.message.name}\n
-                        Win: ${result.message.winCount}`);
-                        if (userConfirmed) {
-                            controller.resetGame();
-                            buildScreenGameBoard();
-                            return;
-                        }
-                    }, 100);
+                    // setTimeout(() => {
+                    //     const userConfirmed = confirm(`Winner: ${result.message.name}\n
+                    //     Win: ${result.message.winCount}`);
+                    //     if (userConfirmed) {
+                    //         controller.resetGame();
+                    //         buildScreenGameBoard();
+                    //         return;
+                    //     }
+                    // }, 100);
                     
                     return;
                 }
@@ -492,14 +492,14 @@ function ScreenController() {
                 if (result.type === 'draw') {
                     buildScreenGameBoard('draw');
                     // Show a dialog to reset the game since its a draw
-                    setTimeout(() => {
-                        const userConfirmed = confirm("Draw: Reset the Game?");
-                        if (userConfirmed) {
-                            controller.resetGame();
-                            buildScreenGameBoard();
-                            return;
-                        }
-                    }, 100)
+                    // setTimeout(() => {
+                    //     const userConfirmed = confirm("Draw: Reset the Game?");
+                    //     if (userConfirmed) {
+                    //         controller.resetGame();
+                    //         buildScreenGameBoard();
+                    //         return;
+                    //     }
+                    // }, 100)
                     return;
                 }
                 
