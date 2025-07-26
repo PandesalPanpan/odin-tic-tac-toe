@@ -57,7 +57,7 @@ body {
     justify-content: center;
 }
 
-.container {
+.tic-tac-toe-container {
     margin-top: 20px;
     width: 50vw;
     height: 50vh;
@@ -66,6 +66,6 @@ body {
     grid-template-rows: repeat(3, 1fr);
 }
 
-.container .cell {
+.tic-tac-toe-container .cell {
     border: 2px solid red;
 }

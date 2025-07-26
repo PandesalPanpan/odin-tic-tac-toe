@@ -372,7 +372,7 @@ function ScreenController() {
     ]
 
     const controller = GameController(players);
-    const container = document.querySelector('.container');
+    const container = document.querySelector('.tic-tac-toe-container');
 
     // Select for player container
     const playerOneName = document.querySelector('.player-1-name');
@@ -384,6 +384,8 @@ function ScreenController() {
     playerTwoName.textContent = `${player2 ?? 'Player 2'}`;
     playerOneWin.textContent = 0;
     playerTwoWin.textContent = 0;
+
+    // Add a reset button
 
     const buildScreenGameBoard = () => {
         // Build the screen based on the 3x3 Array
